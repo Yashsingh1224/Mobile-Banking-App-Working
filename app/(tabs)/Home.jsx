@@ -42,7 +42,7 @@ const Home = () => {
         const unsubscribe = onSnapshot(
             userRef,
             (docSnapshot) => {
-                console.log("Realtime update received:", docSnapshot.data());
+
                 if (docSnapshot.exists()) {
                     const userDocData = docSnapshot.data();
                     let transactionList = userDocData.transactions || [];

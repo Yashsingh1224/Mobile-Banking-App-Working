@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { collection, query, where, getDocs, doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../utility/firebaseConfig";
 import Loader from "../../components/Loader";
 import FingerprintAuth from "./FingerprintAuth";
+import AuthVoice from "./AuthVoice";  // Import AuthVoice component
 
 const TransferMoney = () => {
     const [loading, setLoading] = useState(false);
@@ -12,6 +13,7 @@ const TransferMoney = () => {
     const [amount, setAmount] = useState("");
     const [pin, setPin] = useState("");
     const [isPinVerified, setIsPinVerified] = useState(false);
+    const [isFingerprintVerified, setIsFingerprintVerified] = useState(false);
 
     const validatePinAndAuthenticate = async () => {
         if (!recipientAccount || !amount || !pin) {
@@ -133,6 +135,7 @@ const TransferMoney = () => {
             setAmount("");
             setPin("");
             setIsPinVerified(false);
+            setIsFingerprintVerified(false);
         } catch (error) {
             console.error(error);
             Alert.alert("Error", "Something went wrong. Please try again");
@@ -144,44 +147,57 @@ const TransferMoney = () => {
     return (
         <SafeAreaView className="bg-primary h-full w-full justify-center p-5">
             {loading && <Loader />}
-            <View className="w-full">
-                <Text className="text-2xl font-bold text-secondary">Transfer Money</Text>
 
-                <TextInput
-                    className="mt-5 p-3 border rounded-lg"
-                    placeholder="Recipient Account Number"
-                    value={recipientAccount}
-                    onChangeText={setRecipientAccount}
-                    keyboardType="numeric"
-                />
-                <TextInput
-                    className="mt-3 p-3 border rounded-lg"
-                    placeholder="Amount"
-                    value={amount}
-                    onChangeText={setAmount}
-                    keyboardType="numeric"
-                />
-                <TextInput
-                    className="mt-3 p-3 border rounded-lg"
-                    placeholder="Enter PIN"
-                    value={pin}
-                    onChangeText={setPin}
-                    keyboardType="numeric"
-                    secureTextEntry
-                />
+            {!isFingerprintVerified ? (
+                <View className="w-full">
+                    <Text className="text-2xl font-bold text-secondary">Transfer Money</Text>
 
-                {!isPinVerified ? (
-                    <TouchableOpacity
-                        onPress={validatePinAndAuthenticate}
-                        className="bg-secondary mt-5 p-3 rounded-lg items-center">
-                        <Text className="text-white text-lg">Verify PIN</Text>
-                    </TouchableOpacity>
-                ) : (
-                    <View className="mt-5">
-                        <FingerprintAuth onSuccess={handleTransfer} />
-                    </View>
-                )}
-            </View>
+                    <TextInput
+                        className="mt-5 p-3 border rounded-lg"
+                        placeholder="Recipient Account Number"
+                        value={recipientAccount}
+                        onChangeText={setRecipientAccount}
+                        keyboardType="numeric"
+                    />
+                    <TextInput
+                        className="mt-3 p-3 border rounded-lg"
+                        placeholder="Amount"
+                        value={amount}
+                        onChangeText={setAmount}
+                        keyboardType="numeric"
+                    />
+                    <TextInput
+                        className="mt-3 p-3 border rounded-lg"
+                        placeholder="Enter PIN"
+                        value={pin}
+                        onChangeText={setPin}
+                        keyboardType="numeric"
+                        secureTextEntry
+                    />
+
+                    {!isPinVerified ? (
+                        <TouchableOpacity
+                            onPress={validatePinAndAuthenticate}
+                            className="bg-secondary mt-5 p-3 rounded-lg items-center">
+                            <Text className="text-white text-lg">Verify PIN</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <View className="mt-5">
+                            <FingerprintAuth onSuccess={() => setIsFingerprintVerified(true)} />
+                        </View>
+                    )}
+                </View>
+            ) : (
+                <AuthVoice onSuccess={(response) => {
+                    console.log("AuthVoice Response:", response);
+                    if (response.authenticated === true) {
+                        handleTransfer();
+                    } else {
+                        Alert.alert("Authentication Failed", "Your voice could not be verified.");
+                    }
+                }} />
+
+            )}
         </SafeAreaView>
     );
 };

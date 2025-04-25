@@ -59,6 +59,8 @@ const Register = () => {
             return
         }
 
+        //handle phone number format here
+
         const phoneRegex = /^\+\d{2}\d{8,14}$/;
         if (!phoneRegex.test(form.phone)) {
             Alert.alert('Error', 'Please enter a valid phone number including a two-digit country code');
@@ -69,7 +71,7 @@ const Register = () => {
         //get bank account number from phone number
         const accountNumber = form.phone.slice(3, form.phone.length)
 
-        //handle phone number format here
+
 
 
         try {
@@ -118,7 +120,7 @@ const Register = () => {
             if (error.code === 'auth/weak-password') {
                 Alert.alert('Password must be atleast 6 characters')
             }
-            Alert.alert('Enter a valid Email address !');
+
             if (error.code === 'auth/email-already-in-use') {
                 Alert.alert('Error', 'Email already used')
             }
