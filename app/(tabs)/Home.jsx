@@ -10,6 +10,9 @@ import { router } from "expo-router";
 import { db } from "../../utility/firebaseConfig";
 import { doc, onSnapshot } from "firebase/firestore";
 
+import VoiceToTextInput from '../components/VoiceToTextInput';
+
+
 const Home = () => {
     const { user, userData } = useGlobalStore();
     const username = userData?.firstName || "";
@@ -62,6 +65,13 @@ const Home = () => {
 
     return (
         <SafeAreaView className="bg-primary w-full h-full">
+
+            <View className="pt-10">
+                <VoiceToTextInput />
+            </View>
+
+
+
             <View className="flex-row justify-between items-center px-3 pt-4">
                 <View>
                     <Text className="text-xl font-bold text-gray-700">{getGreeting()}</Text>

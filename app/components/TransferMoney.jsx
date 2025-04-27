@@ -7,6 +7,9 @@ import Loader from "../../components/Loader";
 import FingerprintAuth from "./FingerprintAuth";
 import AuthVoice from "./AuthVoice";  // Import AuthVoice component
 
+import VoiceToTextTransfer from './VoiceToTextTransfer';
+
+
 const TransferMoney = () => {
     const [loading, setLoading] = useState(false);
     const [recipientAccount, setRecipientAccount] = useState("");
@@ -14,6 +17,35 @@ const TransferMoney = () => {
     const [pin, setPin] = useState("");
     const [isPinVerified, setIsPinVerified] = useState(false);
     const [isFingerprintVerified, setIsFingerprintVerified] = useState(false);
+
+    const handleVoiceCommand = (text) => {
+        const lowerText = text.toLowerCase();
+
+        if (lowerText.includes('account')) {
+            const number = extractNumber(lowerText);
+            console.log('Detected Account Number:', number);
+            setRecipientAccount(number);
+        }
+        else if (lowerText.includes('amount')) {
+            const number = extractNumber(lowerText);
+            console.log('Detected Amount:', number);
+            setAmount(number);
+        }
+        else if (lowerText.includes('pin')) {
+            const number = extractNumber(lowerText);
+            console.log('Detected PIN:', number);
+            setPin(number);
+        }
+    };
+
+    const extractNumber = (text) => {
+        // Match all digits, ignore hyphens, spaces, etc
+        const digitsOnly = text.match(/\d+/g);
+        if (digitsOnly) {
+            return digitsOnly.join(''); // Join all number parts into a single string
+        }
+        return '';
+    };
 
     const validatePinAndAuthenticate = async () => {
         if (!recipientAccount || !amount || !pin) {
@@ -147,6 +179,9 @@ const TransferMoney = () => {
     return (
         <SafeAreaView className="bg-primary h-full w-full justify-center p-5">
             {loading && <Loader />}
+
+            <VoiceToTextTransfer onSpeechResult={handleVoiceCommand} />
+
 
             {!isFingerprintVerified ? (
                 <View className="w-full">
