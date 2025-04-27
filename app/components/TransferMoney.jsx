@@ -1,14 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { collection, query, where, getDocs, doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../utility/firebaseConfig";
 import Loader from "../../components/Loader";
 import FingerprintAuth from "./FingerprintAuth";
-import AuthVoice from "./AuthVoice";  // Import AuthVoice component
-
+import * as Speech from 'expo-speech';
 import VoiceToTextTransfer from './VoiceToTextTransfer';
-
 
 const TransferMoney = () => {
     const [loading, setLoading] = useState(false);
@@ -20,7 +18,6 @@ const TransferMoney = () => {
 
     const handleVoiceCommand = (text) => {
         const lowerText = text.toLowerCase();
-
         if (lowerText.includes('account')) {
             const number = extractNumber(lowerText);
             console.log('Detected Account Number:', number);
@@ -36,13 +33,25 @@ const TransferMoney = () => {
             console.log('Detected PIN:', number);
             setPin(number);
         }
+        else if (lowerText.includes('validate')) {
+            validatePinAndAuthenticate();
+        }
     };
+    useEffect(() => {
+        Speech.speak("Voice transfer page");
+    }, []); // 👈 very important: empty dependency array
+
+    useEffect(() => {
+        if (recipientAccount && amount && pin) {
+            Speech.speak("All fields are filled");
+
+        }
+    }, [recipientAccount, amount, pin]);
 
     const extractNumber = (text) => {
-        // Match all digits, ignore hyphens, spaces, etc
         const digitsOnly = text.match(/\d+/g);
         if (digitsOnly) {
-            return digitsOnly.join(''); // Join all number parts into a single string
+            return digitsOnly.join('');
         }
         return '';
     };
@@ -123,10 +132,9 @@ const TransferMoney = () => {
             const recipientDoc = recipientSnapshot.docs[0];
             const recipientData = recipientDoc.data();
 
-            const transactionID = Date.now(); // Unique ID based on timestamp
+            const transactionID = Date.now();
             const transactionTime = new Date().toLocaleString();
 
-            // Transaction details
             const senderTransaction = {
                 transactionID,
                 transactionType: "transfer",
@@ -151,7 +159,6 @@ const TransferMoney = () => {
                 bankName: "YourBank"
             };
 
-            // Update sender and recipient balances & add transactions
             await updateDoc(doc(db, "users", senderDoc.id), {
                 accountBalance: senderData.accountBalance - parseFloat(amount),
                 transactions: senderData.transactions ? [...senderData.transactions, senderTransaction] : [senderTransaction]
@@ -162,7 +169,7 @@ const TransferMoney = () => {
                 transactions: recipientData.transactions ? [...recipientData.transactions, recipientTransaction] : [recipientTransaction]
             });
 
-            Alert.alert("Success", "Transfer completed successfully");
+            Speech.speak("Tranfer completed successfully");
             setRecipientAccount("");
             setAmount("");
             setPin("");
@@ -177,63 +184,64 @@ const TransferMoney = () => {
     };
 
     return (
-        <SafeAreaView className="bg-primary h-full w-full justify-center p-5">
+        <SafeAreaView className="bg-primary h-full w-full p-5">
             {loading && <Loader />}
 
-            <VoiceToTextTransfer onSpeechResult={handleVoiceCommand} />
-
-
-            {!isFingerprintVerified ? (
-                <View className="w-full">
-                    <Text className="text-2xl font-bold text-secondary">Transfer Money</Text>
-
-                    <TextInput
-                        className="mt-5 p-3 border rounded-lg"
-                        placeholder="Recipient Account Number"
-                        value={recipientAccount}
-                        onChangeText={setRecipientAccount}
-                        keyboardType="numeric"
-                    />
-                    <TextInput
-                        className="mt-3 p-3 border rounded-lg"
-                        placeholder="Amount"
-                        value={amount}
-                        onChangeText={setAmount}
-                        keyboardType="numeric"
-                    />
-                    <TextInput
-                        className="mt-3 p-3 border rounded-lg"
-                        placeholder="Enter PIN"
-                        value={pin}
-                        onChangeText={setPin}
-                        keyboardType="numeric"
-                        secureTextEntry
-                    />
-
-                    {!isPinVerified ? (
-                        <TouchableOpacity
-                            onPress={validatePinAndAuthenticate}
-                            className="bg-secondary mt-5 p-3 rounded-lg items-center">
-                            <Text className="text-white text-lg">Verify PIN</Text>
-                        </TouchableOpacity>
-                    ) : (
-                        <View className="mt-5">
-                            <FingerprintAuth onSuccess={() => setIsFingerprintVerified(true)} />
-                        </View>
-                    )}
+            {!isPinVerified && (
+                <View className="absolute top-5 left-5 right-5 z-10">
+                    <VoiceToTextTransfer onSpeechResult={handleVoiceCommand} />
                 </View>
-            ) : (
-                <AuthVoice onSuccess={(response) => {
-                    console.log("AuthVoice Response:", response);
-                    if (response.authenticated === true) {
-                        handleTransfer();
-                    } else {
-                        Alert.alert("Authentication Failed", "Your voice could not be verified.");
-                    }
-                }} />
-
             )}
+
+            {/* 👉 Main Content below */}
+            <View className="flex-1 justify-center">
+                {!isFingerprintVerified ? (
+                    <View className="w-full">
+                        <Text className="text-2xl font-bold text-secondary">Transfer Money</Text>
+
+                        <TextInput
+                            className="mt-5 p-3 border rounded-lg"
+                            placeholder="Recipient Account Number"
+                            value={recipientAccount}
+                            onChangeText={setRecipientAccount}
+                            keyboardType="numeric"
+                        />
+                        <TextInput
+                            className="mt-3 p-3 border rounded-lg"
+                            placeholder="Amount"
+                            value={amount}
+                            onChangeText={setAmount}
+                            keyboardType="numeric"
+                        />
+                        <TextInput
+                            className="mt-3 p-3 border rounded-lg"
+                            placeholder="Enter PIN"
+                            value={pin}
+                            onChangeText={setPin}
+                            keyboardType="numeric"
+                            secureTextEntry
+                        />
+
+                        {!isPinVerified ? (
+                            <TouchableOpacity
+                                onPress={validatePinAndAuthenticate}
+                                className="bg-secondary mt-5 p-3 rounded-lg items-center">
+                                <Text className="text-white text-lg">Verify PIN</Text>
+                            </TouchableOpacity>
+                        ) : (
+                            <View className="mt-5">
+                                <FingerprintAuth onSuccess={() => {
+                                    setIsFingerprintVerified(true);
+                                    handleTransfer();
+                                }} />
+                            </View>
+                        )}
+                    </View>
+                ) : null}
+            </View>
         </SafeAreaView>
+
+
     );
 };
 
