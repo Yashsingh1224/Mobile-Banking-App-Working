@@ -1,6 +1,8 @@
 import React from 'react'
 import { View, Text } from "react-native";
 import FingerprintAuth from '../components/FingerprintAuth';
+import AuthVoice from '../components/AuthVoice'
+
 
 const Investment = () => {
     const handleAuthSuccess = () => {
@@ -9,7 +11,7 @@ const Investment = () => {
     };
     return (
         <View className="flex-1">
-            <FingerprintAuth onSuccess={handleAuthSuccess} />
+            <AuthVoice />
         </View>
     )
 }

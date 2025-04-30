@@ -1,17 +1,15 @@
+// components/VerifyVoice.jsx
+
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Alert } from 'react-native';
 import { Audio } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
-import { useRouter } from 'expo-router';
-import { useGlobalStore } from "../../context/globalStore";
 
-const AuthVoice = () => {
+const VerifyVoice = ({ username, onSuccess }) => {
     const [recording, setRecording] = useState(null);
     const [isRecording, setIsRecording] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const router = useRouter();
-    const { user } = useGlobalStore(); // Assuming 'user' has the username
 
     const startRecording = async () => {
         try {
@@ -25,15 +23,15 @@ const AuthVoice = () => {
             await newRecording.prepareToRecordAsync({
                 android: {
                     extension: '.m4a',
-                    outputFormat: Audio.AndroidOutputFormat.MPEG_4,
-                    audioEncoder: Audio.AndroidAudioEncoder.AAC,
+                    outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
+                    audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
                     sampleRate: 44100,
                     numberOfChannels: 1,
                     bitRate: 128000,
                 },
                 ios: {
                     extension: '.m4a',
-                    audioQuality: Audio.IOSAudioQuality.MAX,
+                    audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_MAX,
                     sampleRate: 44100,
                     numberOfChannels: 1,
                     bitRate: 128000,
@@ -60,9 +58,6 @@ const AuthVoice = () => {
             const uri = recording.getURI();
             console.log('Recording stopped. File stored at:', uri);
 
-            const info = await FileSystem.getInfoAsync(uri);
-            console.log('Recorded file info:', info);
-
             await sendAudioToServer(uri);
         } catch (err) {
             console.error('Failed to stop recording', err);
@@ -74,18 +69,21 @@ const AuthVoice = () => {
         setIsLoading(true);
 
         try {
-            const formData = new FormData();
+            const fileInfo = await FileSystem.getInfoAsync(uri);
+            if (!fileInfo.exists) {
+                throw new Error('Audio file does not exist at the specified path.');
+            }
 
+            const formData = new FormData();
+            formData.append('username', username);
             formData.append('file', {
-                uri: uri.startsWith('file://') ? uri : 'file://' + uri,
-                name: 'voice_auth.m4a', // Name it .m4a
-                type: 'audio/m4a',      // Correct MIME type
+                uri: uri,
+                name: 'voice_verification.m4a',
+                type: 'audio/m4a',
             });
 
-            formData.append('user', "yash"); // Correctly send user name
-
             const response = await axios.post(
-                'https://voiceauth.onrender.com/authenticate',
+                'https://voiceauthentication-1.onrender.com/verify-voice',
                 formData,
                 {
                     headers: {
@@ -95,26 +93,20 @@ const AuthVoice = () => {
             );
 
             console.log('Server Response:', response.data);
-            handleServerResponse(response.data);
-
+            if (response.data.match) {
+                Alert.alert('Verification Success', 'Voice matched successfully.');
+                onSuccess();
+            } else {
+                Alert.alert('Verification Failed', 'Voice did not match.');
+                onSuccess();
+            }
         } catch (error) {
             console.error('Error sending audio:', error.message);
-            if (error.response) {
-                console.log('Server responded with:', error.response.data);
-            }
-            Alert.alert('Error', 'Failed to authenticate voice.');
+            Alert.alert('Error', 'Failed to verify voice.');
+            onSuccess();
         }
 
         setIsLoading(false);
-    };
-
-    const handleServerResponse = (data) => {
-        if (data.authenticated) {
-            Alert.alert('Authentication Success', `Welcome ${user.username}!`);
-            router.push('/Transfer');
-        } else {
-            Alert.alert('Authentication Failed', data.message || 'Please try again.');
-        }
     };
 
     return (
@@ -155,4 +147,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default AuthVoice;
+export default VerifyVoice;

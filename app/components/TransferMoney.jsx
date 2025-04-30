@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { collection, query, where, getDocs, doc, updateDoc } from "firebase/firestore";
@@ -7,6 +7,8 @@ import Loader from "../../components/Loader";
 import FingerprintAuth from "./FingerprintAuth";
 import * as Speech from 'expo-speech';
 import VoiceToTextTransfer from './VoiceToTextTransfer';
+import VerifyVoice from './VerifyVoice';
+import { useGlobalStore } from "../../context/globalStore";
 
 const TransferMoney = () => {
     const [loading, setLoading] = useState(false);
@@ -15,6 +17,12 @@ const TransferMoney = () => {
     const [pin, setPin] = useState("");
     const [isPinVerified, setIsPinVerified] = useState(false);
     const [isFingerprintVerified, setIsFingerprintVerified] = useState(false);
+    const [isVoiceVerified, setIsVoiceVerified] = useState(false);
+    const [isVoiceVerificationStarted, setIsVoiceVerificationStarted] = useState(false);
+    const hasSpokenAllFields = useRef(false);
+
+    const { user, userData } = useGlobalStore();
+    const username = userData?.firstName || "";
 
     const handleVoiceCommand = (text) => {
         const lowerText = text.toLowerCase();
@@ -37,16 +45,21 @@ const TransferMoney = () => {
             validatePinAndAuthenticate();
         }
     };
+
     useEffect(() => {
         Speech.speak("Voice transfer page");
-    }, []); // 👈 very important: empty dependency array
+    }, []);
 
     useEffect(() => {
-        if (recipientAccount && amount && pin) {
+        const allFilled = recipientAccount.trim() && amount.trim() && pin.trim();
+        if (allFilled && !hasSpokenAllFields.current) {
+            hasSpokenAllFields.current = true;
             Speech.speak("All fields are filled");
-
+        } else if (!allFilled) {
+            hasSpokenAllFields.current = false; // reset if any field is cleared
         }
     }, [recipientAccount, amount, pin]);
+
 
     const extractNumber = (text) => {
         const digitsOnly = text.match(/\d+/g);
@@ -169,12 +182,15 @@ const TransferMoney = () => {
                 transactions: recipientData.transactions ? [...recipientData.transactions, recipientTransaction] : [recipientTransaction]
             });
 
-            Speech.speak("Tranfer completed successfully");
+            Speech.speak("Transfer completed successfully");
             setRecipientAccount("");
             setAmount("");
             setPin("");
             setIsPinVerified(false);
             setIsFingerprintVerified(false);
+            setIsVoiceVerified(false);
+            setIsVoiceVerificationStarted(false);
+            hasSpokenAllFields.current = false;
         } catch (error) {
             console.error(error);
             Alert.alert("Error", "Something went wrong. Please try again");
@@ -193,9 +209,8 @@ const TransferMoney = () => {
                 </View>
             )}
 
-            {/* 👉 Main Content below */}
             <View className="flex-1 justify-center">
-                {!isFingerprintVerified ? (
+                {!isFingerprintVerified && !isVoiceVerified && (
                     <View className="w-full">
                         <Text className="text-2xl font-bold text-secondary">Transfer Money</Text>
 
@@ -232,16 +247,22 @@ const TransferMoney = () => {
                             <View className="mt-5">
                                 <FingerprintAuth onSuccess={() => {
                                     setIsFingerprintVerified(true);
-                                    handleTransfer();
                                 }} />
                             </View>
                         )}
                     </View>
-                ) : null}
+                )}
+
+                {isFingerprintVerified && !isVoiceVerified && (
+                    <View className="w-full">
+                        <VerifyVoice username={username} onSuccess={() => {
+                            setIsVoiceVerified(true);
+                            handleTransfer();
+                        }} />
+                    </View>
+                )}
             </View>
         </SafeAreaView>
-
-
     );
 };
 

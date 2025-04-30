@@ -9,6 +9,7 @@ import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } 
 import { collection, query, where, getDocs, doc, setDoc } from "firebase/firestore"
 import { auth, db } from "../../utility/firebaseConfig"
 import Loader from "../../components/Loader";
+import RegisterVoice from "../components/RegisterVoice";
 
 
 const Register = () => {
@@ -144,6 +145,11 @@ const Register = () => {
                 <View className="w-full justify-center items-center mt-7">
                     <Text className="text-2xl font-pbold text-secondary">Welcome</Text>
                     <Text className="text-gray-200 text-lg">Register to get started</Text>
+                </View>
+
+                <View
+                    className="mt-6 rounded-3xl border-2 border-[#E7E7E7] w-full px-4 py-4">
+                    <RegisterVoice username="yash" />
                 </View>
 
                 <View

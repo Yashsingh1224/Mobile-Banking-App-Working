@@ -3,15 +3,12 @@ import { View, TouchableOpacity, Text, StyleSheet, Alert } from 'react-native';
 import { Audio } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
-import { useRouter } from 'expo-router';
-import { useGlobalStore } from "../../context/globalStore";
 
-const AuthVoice = () => {
+const RegisterVoice = ({ username }) => {
     const [recording, setRecording] = useState(null);
     const [isRecording, setIsRecording] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const router = useRouter();
-    const { user } = useGlobalStore(); // Assuming 'user' has the username
+    const [recordings, setRecordings] = useState([]);
 
     const startRecording = async () => {
         try {
@@ -60,32 +57,45 @@ const AuthVoice = () => {
             const uri = recording.getURI();
             console.log('Recording stopped. File stored at:', uri);
 
-            const info = await FileSystem.getInfoAsync(uri);
-            console.log('Recorded file info:', info);
+            const fileName = `sample_${Date.now()}.m4a`;
+            const newPath = FileSystem.documentDirectory + fileName;
 
-            await sendAudioToServer(uri);
+            await FileSystem.moveAsync({
+                from: uri,
+                to: newPath,
+            });
+
+            console.log('File moved to:', newPath);
+            setRecordings((prev) => [...prev, newPath]);
+            setRecording(null);
         } catch (err) {
             console.error('Failed to stop recording', err);
             Alert.alert('Recording Error', 'Failed to stop recording.');
         }
     };
 
-    const sendAudioToServer = async (uri) => {
+    const registerUser = async () => {
+        if (recordings.length < 5) {
+            Alert.alert('Insufficient Recordings', 'Please record at least 5 samples.');
+            return;
+        }
+
         setIsLoading(true);
 
-        try {
-            const formData = new FormData();
+        const formData = new FormData();
+        formData.append('username', username);
 
-            formData.append('file', {
-                uri: uri.startsWith('file://') ? uri : 'file://' + uri,
-                name: 'voice_auth.m4a', // Name it .m4a
-                type: 'audio/m4a',      // Correct MIME type
+        recordings.forEach((uri, index) => {
+            formData.append(`file${index + 1}`, {
+                uri,
+                name: `sample${index + 1}.m4a`,
+                type: 'audio/m4a',
             });
+        });
 
-            formData.append('user', "yash"); // Correctly send user name
-
+        try {
             const response = await axios.post(
-                'https://voiceauth.onrender.com/authenticate',
+                'https://voiceauthentication-1.onrender.com/register-user',
                 formData,
                 {
                     headers: {
@@ -93,28 +103,14 @@ const AuthVoice = () => {
                     },
                 }
             );
-
-            console.log('Server Response:', response.data);
-            handleServerResponse(response.data);
-
+            console.log('Register Response:', response.data);
+            Alert.alert('Registration Success', 'Your voice has been registered.');
         } catch (error) {
-            console.error('Error sending audio:', error.message);
-            if (error.response) {
-                console.log('Server responded with:', error.response.data);
-            }
-            Alert.alert('Error', 'Failed to authenticate voice.');
+            console.error('Error during registration:', error.message);
+            Alert.alert('Registration Error', 'Failed to register your voice.');
         }
 
         setIsLoading(false);
-    };
-
-    const handleServerResponse = (data) => {
-        if (data.authenticated) {
-            Alert.alert('Authentication Success', `Welcome ${user.username}!`);
-            router.push('/Transfer');
-        } else {
-            Alert.alert('Authentication Failed', data.message || 'Please try again.');
-        }
     };
 
     return (
@@ -127,6 +123,13 @@ const AuthVoice = () => {
                 <Text style={styles.buttonText}>
                     {isRecording ? 'Stop Recording' : isLoading ? 'Processing...' : 'Start Recording'}
                 </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.button}
+                onPress={registerUser}
+                disabled={isLoading || recordings.length < 5}
+            >
+                <Text style={styles.buttonText}>Register Voice</Text>
             </TouchableOpacity>
         </View>
     );
@@ -148,6 +151,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         width: '90%',
         height: 60,
+        marginVertical: 10,
     },
     buttonText: {
         color: '#ffffff',
@@ -155,4 +159,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default AuthVoice;
+export default RegisterVoice;
