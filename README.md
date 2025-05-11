@@ -48,3 +48,6 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Demonstration of this Application
+- [Linkedin url](https://www.linkedin.com/posts/yash-yash-a85359266_accessibilitymatters-voicetechnology-mobilebanking-activity-7322288337245896704-EjnH?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEExG8UB-mmgKHkmgWOw8Ymqp2zRw6MAvy8) : Visit this link to see demonstration of working application
