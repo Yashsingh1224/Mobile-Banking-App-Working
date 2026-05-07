@@ -107,6 +107,7 @@ const Register = () => {
                 state: "",
                 dateOfBirth: form.dateOfBirth,
                 accountBalance: 1000,
+                walletAddress: "",
                 transactions: [],
                 beneficiary: []
             }

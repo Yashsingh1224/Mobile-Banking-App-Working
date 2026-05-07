@@ -10,6 +10,18 @@ import VoiceToTextTransfer from './VoiceToTextTransfer';
 import VerifyVoice from './VerifyVoice';
 import { useGlobalStore } from "../../context/globalStore";
 
+// Web3 Imports
+import { getContract, prepareContractCall, toUnits } from "thirdweb";
+import { useActiveAccount, useConnect, useSendTransaction, useReadContract } from "thirdweb/react";
+import { client } from "../../utility/thirdwebClient";
+import {
+    accountAbstraction,
+    appChain,
+    BANK_TOKEN_CONTRACT_ADDRESS,
+    BANK_TOKEN_DECIMALS,
+    createBankWallet,
+} from "../../utility/blockchainConfig";
+
 const TransferMoney = () => {
     const [loading, setLoading] = useState(false);
     const [recipientAccount, setRecipientAccount] = useState("");
@@ -18,28 +30,41 @@ const TransferMoney = () => {
     const [isPinVerified, setIsPinVerified] = useState(false);
     const [isFingerprintVerified, setIsFingerprintVerified] = useState(false);
     const [isVoiceVerified, setIsVoiceVerified] = useState(false);
-    const [isVoiceVerificationStarted, setIsVoiceVerificationStarted] = useState(false);
     const hasSpokenAllFields = useRef(false);
 
-    const { user, userData } = useGlobalStore();
+    const { userData, walletAddress, setWalletAddress } = useGlobalStore();
     const username = userData?.firstName || "";
+    const activeAccount = useActiveAccount();
+    const { connect, isConnecting } = useConnect({ accountAbstraction });
+
+    // Initialize Smart Contract
+    const tokenContract = getContract({
+        client,
+        chain: appChain,
+        address: BANK_TOKEN_CONTRACT_ADDRESS,
+    });
+
+    // Web3 Transaction Hook
+    const { mutateAsync: sendTx } = useSendTransaction();
+
+    // Check user's current token balance to prevent overdrafts
+    const { data: currentBalanceObj } = useReadContract({
+        contract: tokenContract,
+        method: "function balanceOf(address account) view returns (uint256)",
+        params: activeAccount?.address ? [activeAccount.address] : undefined,
+        queryOptions: { enabled: !!activeAccount?.address },
+    });
 
     const handleVoiceCommand = (text) => {
         const lowerText = text.toLowerCase();
         if (lowerText.includes('account')) {
-            const number = extractNumber(lowerText);
-            console.log('Detected Account Number:', number);
-            setRecipientAccount(number);
+            setRecipientAccount(extractNumber(lowerText));
         }
         else if (lowerText.includes('amount')) {
-            const number = extractNumber(lowerText);
-            console.log('Detected Amount:', number);
-            setAmount(number);
+            setAmount(extractNumber(lowerText));
         }
         else if (lowerText.includes('pin')) {
-            const number = extractNumber(lowerText);
-            console.log('Detected PIN:', number);
-            setPin(number);
+            setPin(extractNumber(lowerText));
         }
         else if (lowerText.includes('validate')) {
             validatePinAndAuthenticate();
@@ -51,27 +76,62 @@ const TransferMoney = () => {
     }, []);
 
     useEffect(() => {
+        const currentUser = auth.currentUser;
+        if (!currentUser?.uid || !activeAccount?.address) return;
+        if (walletAddress === activeAccount.address) return;
+
+        setWalletAddress(activeAccount.address);
+        updateDoc(doc(db, "users", currentUser.uid), {
+            walletAddress: activeAccount.address,
+        }).catch((error) => {
+            console.error("Error saving wallet address:", error);
+        });
+    }, [activeAccount?.address, setWalletAddress, walletAddress]);
+
+    useEffect(() => {
         const allFilled = recipientAccount.trim() && amount.trim() && pin.trim();
         if (allFilled && !hasSpokenAllFields.current) {
             hasSpokenAllFields.current = true;
             Speech.speak("All fields are filled");
         } else if (!allFilled) {
-            hasSpokenAllFields.current = false; // reset if any field is cleared
+            hasSpokenAllFields.current = false;
         }
     }, [recipientAccount, amount, pin]);
 
-
     const extractNumber = (text) => {
         const digitsOnly = text.match(/\d+/g);
-        if (digitsOnly) {
-            return digitsOnly.join('');
+        return digitsOnly ? digitsOnly.join('') : '';
+    };
+
+    const handleConnectWallet = async () => {
+        try {
+            await connect(async () => {
+                const wallet = createBankWallet();
+                await wallet.connect({
+                    chain: appChain,
+                    client,
+                });
+                return wallet;
+            });
+        } catch (error) {
+            console.error("Wallet connection failed:", error);
+            Alert.alert("Wallet Connection Failed", "Install MetaMask in this emulator or test on a phone with MetaMask.");
         }
-        return '';
     };
 
     const validatePinAndAuthenticate = async () => {
         if (!recipientAccount || !amount || !pin) {
             Alert.alert("Error", "Please fill in all fields");
+            return;
+        }
+
+        if (!activeAccount?.address) {
+            Alert.alert("Wallet Required", "Connect your wallet before transferring.");
+            return;
+        }
+
+        if (walletAddress && walletAddress !== activeAccount.address) {
+            Alert.alert("Wallet Mismatch", "Use the wallet saved on your profile or reconnect from Home.");
             return;
         }
 
@@ -83,35 +143,26 @@ const TransferMoney = () => {
 
         try {
             setLoading(true);
-            const sender = auth.currentUser;
-            if (!sender) {
-                Alert.alert("Error", "User not authenticated");
-                return;
-            }
-
-            const senderQuery = query(collection(db, "users"), where("displayName", "==", sender.displayName));
-            const senderSnapshot = await getDocs(senderQuery);
-            if (senderSnapshot.empty) {
-                Alert.alert("Error", "Sender not found");
-                return;
-            }
-            const senderDoc = senderSnapshot.docs[0];
-            const senderData = senderDoc.data();
+            const senderData = userData;
 
             if (senderData.pin !== pin) {
                 Alert.alert("Error", "Incorrect PIN");
                 return;
             }
 
-            if (senderData.accountBalance < transferAmount) {
-                Alert.alert("Error", "Insufficient balance");
+            // Convert BigInt balance from contract to readable number (assuming 18 decimals)
+            const requestedAmount = toUnits(amount, BANK_TOKEN_DECIMALS);
+
+            if (!currentBalanceObj || currentBalanceObj < requestedAmount) {
+                Alert.alert("Error", "Insufficient blockchain balance");
+                Speech.speak("Insufficient balance for this transfer");
                 return;
             }
 
             setIsPinVerified(true);
         } catch (error) {
             console.error(error);
-            Alert.alert("Error", "Something went wrong. Please try again");
+            Alert.alert("Error", "Something went wrong.");
         } finally {
             setLoading(false);
         }
@@ -121,21 +172,7 @@ const TransferMoney = () => {
         try {
             setLoading(true);
 
-            const sender = auth.currentUser;
-            if (!sender) {
-                Alert.alert("Error", "User not authenticated");
-                return;
-            }
-
-            const senderQuery = query(collection(db, "users"), where("displayName", "==", sender.displayName));
-            const senderSnapshot = await getDocs(senderQuery);
-            if (senderSnapshot.empty) {
-                Alert.alert("Error", "Sender not found");
-                return;
-            }
-            const senderDoc = senderSnapshot.docs[0];
-            const senderData = senderDoc.data();
-
+            // 1. Get Recipient details from Firestore (to find their 0x wallet address)
             const recipientQuery = query(collection(db, "users"), where("accountNumber", "==", recipientAccount));
             const recipientSnapshot = await getDocs(recipientQuery);
             if (recipientSnapshot.empty) {
@@ -145,55 +182,59 @@ const TransferMoney = () => {
             const recipientDoc = recipientSnapshot.docs[0];
             const recipientData = recipientDoc.data();
 
+            if (!recipientData.walletAddress) {
+                Alert.alert("Error", "Recipient does not have a registered Web3 Wallet yet.");
+                return;
+            }
+
+            // 2. Prepare Blockchain Transaction
+            const amountInWei = toUnits(amount, BANK_TOKEN_DECIMALS);
+
+            const transaction = prepareContractCall({
+                contract: tokenContract,
+                method: "function transfer(address to, uint256 value)",
+                params: [recipientData.walletAddress, amountInWei],
+            });
+
+            // 3. Execute Blockchain Transfer (Gasless via Thirdweb)
+            await sendTx(transaction);
+
+            // 4. Record Transaction History in Firestore (Removing accountBalance updates)
+            const sender = auth.currentUser;
+            const senderQuery = query(collection(db, "users"), where("displayName", "==", sender.displayName));
+            const senderDoc = (await getDocs(senderQuery)).docs[0];
+
             const transactionID = Date.now();
             const transactionTime = new Date().toLocaleString();
 
             const senderTransaction = {
-                transactionID,
-                transactionType: "transfer",
-                phone: recipientData.displayName,
-                accountNumber: recipientAccount,
-                name: recipientData.firstName + " " + recipientData.lastName,
-                category: "Transfer",
-                dateTime: transactionTime,
-                amount: parseFloat(amount),
-                bankName: "YourBank"
+                transactionID, transactionType: "transfer", phone: recipientData.displayName,
+                accountNumber: recipientAccount, name: recipientData.firstName + " " + recipientData.lastName,
+                category: "Blockchain Transfer", dateTime: transactionTime, amount: parseFloat(amount), bankName: "YourBank"
             };
 
             const recipientTransaction = {
-                transactionID,
-                transactionType: "receive",
-                phone: sender.displayName,
-                accountNumber: senderData.accountNumber,
-                name: senderData.firstName + " " + senderData.lastName,
-                category: "Transfer",
-                dateTime: transactionTime,
-                amount: parseFloat(amount),
-                bankName: "YourBank"
+                transactionID, transactionType: "receive", phone: sender.displayName,
+                accountNumber: userData.accountNumber, name: userData.firstName + " " + userData.lastName,
+                category: "Blockchain Transfer", dateTime: transactionTime, amount: parseFloat(amount), bankName: "YourBank"
             };
 
             await updateDoc(doc(db, "users", senderDoc.id), {
-                accountBalance: senderData.accountBalance - parseFloat(amount),
-                transactions: senderData.transactions ? [...senderData.transactions, senderTransaction] : [senderTransaction]
+                transactions: userData.transactions ? [...userData.transactions, senderTransaction] : [senderTransaction]
             });
 
             await updateDoc(doc(db, "users", recipientDoc.id), {
-                accountBalance: recipientData.accountBalance + parseFloat(amount),
                 transactions: recipientData.transactions ? [...recipientData.transactions, recipientTransaction] : [recipientTransaction]
             });
 
-            Speech.speak("Transfer completed successfully");
-            setRecipientAccount("");
-            setAmount("");
-            setPin("");
-            setIsPinVerified(false);
-            setIsFingerprintVerified(false);
-            setIsVoiceVerified(false);
-            setIsVoiceVerificationStarted(false);
+            Speech.speak("Transfer completed securely on the blockchain.");
+            setRecipientAccount(""); setAmount(""); setPin("");
+            setIsPinVerified(false); setIsFingerprintVerified(false); setIsVoiceVerified(false);
             hasSpokenAllFields.current = false;
         } catch (error) {
             console.error(error);
-            Alert.alert("Error", "Something went wrong. Please try again");
+            Alert.alert("Error", "Blockchain transaction failed. Please try again.");
+            Speech.speak("Transfer failed.");
         } finally {
             setLoading(false);
         }
@@ -203,7 +244,21 @@ const TransferMoney = () => {
         <SafeAreaView className="bg-primary h-full w-full p-5">
             {loading && <Loader />}
 
-            {!isPinVerified && (
+            {!activeAccount?.address && (
+                <View className="absolute top-5 left-5 right-5 z-20">
+                    <TouchableOpacity
+                        className="bg-secondary p-3 rounded-lg items-center"
+                        disabled={isConnecting}
+                        onPress={handleConnectWallet}
+                    >
+                        <Text className="text-white font-bold">
+                            {isConnecting ? "Connecting..." : "Connect MetaMask"}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+
+            {!isPinVerified && activeAccount?.address && (
                 <View className="absolute top-5 left-5 right-5 z-10">
                     <VoiceToTextTransfer onSpeechResult={handleVoiceCommand} />
                 </View>
@@ -245,9 +300,7 @@ const TransferMoney = () => {
                             </TouchableOpacity>
                         ) : (
                             <View className="mt-5">
-                                <FingerprintAuth onSuccess={() => {
-                                    setIsFingerprintVerified(true);
-                                }} />
+                                <FingerprintAuth onSuccess={() => setIsFingerprintVerified(true)} />
                             </View>
                         )}
                     </View>

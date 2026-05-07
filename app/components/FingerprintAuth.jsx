@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { View, TouchableOpacity, Alert, StyleSheet } from "react-native";
+import React from "react";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import * as LocalAuthentication from "expo-local-authentication";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const FingerprintAuth = ({ onSuccess }) => {
     const handleBiometricAuth = async () => {
@@ -29,7 +29,7 @@ const FingerprintAuth = ({ onSuccess }) => {
     return (
         <View style={styles.container}>
             <TouchableOpacity onPress={handleBiometricAuth} style={styles.authButton}>
-                <Icon name="fingerprint" size={50} color="white" />
+                <MaterialCommunityIcons name="fingerprint" size={50} color="white" />
             </TouchableOpacity>
         </View>
     );

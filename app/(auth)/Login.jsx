@@ -15,9 +15,8 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [form, setForm] = useState({ phone: "", password: "" });
-    const { setUser } = useGlobalStore();
+    const { setUser, setWalletAddress } = useGlobalStore();
 
-    // Read screen options aloud on mount
     useEffect(() => {
         Speech.speak("Welcome to the login page. Tap anywhere to hear options. You can say Login to sign in.");
     }, []);
@@ -45,11 +44,16 @@ const Login = () => {
             const userDoc = querySnapshot.docs[0];
             const email = userDoc.data().email;
 
+            // 1. Firebase Auth
             const credential = await signInWithEmailAndPassword(auth, email, form.password);
             const user = auth.currentUser;
+
             if (user.emailVerified) {
+                setWalletAddress(userDoc.data().walletAddress || null);
+
                 setUser(credential.user);
                 await AsyncStorage.setItem('userAuth', JSON.stringify(credential.user));
+
                 router.replace('/Home');
                 Speech.speak("Login successful. Redirecting to home page.");
             } else {

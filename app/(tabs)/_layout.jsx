@@ -87,6 +87,22 @@ const TabLayout = () => {
                 />
 
                 <Tabs.Screen
+                    name="CurrencyDetector"
+                    options={{
+                        title: "Detect",
+                        headerShown: false,
+                        tabBarIcon: ({color, focused}) => (
+                            <TabIcon
+                                icon={icons.scan}
+                                color={color}
+                                name="Detect"
+                                focused={focused}
+                            />
+                        ),
+                    }}
+                />
+
+                <Tabs.Screen
                     name="Profile"
                     options={{
                         title: "Profile",

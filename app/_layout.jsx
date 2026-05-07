@@ -1,11 +1,16 @@
-import {useFonts} from 'expo-font';
-import {Stack} from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import {useEffect} from 'react';
-import 'react-native-reanimated';
-import {useGlobalStore} from "../context/globalStore";
+// MUST BE THE VERY FIRST LINE
+import "../polyfills";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
+import 'react-native-reanimated';
+
+import { useGlobalStore } from "../context/globalStore";
+
+import { ThirdwebProvider } from "thirdweb/react";
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -16,7 +21,7 @@ export default function RootLayout() {
         "SF-Regular": require("../assets/fonts/SfRegular.otf"),
     });
 
-    const {loadUserFromStorage} = useGlobalStore()
+    const { loadUserFromStorage } = useGlobalStore();
 
     useEffect(() => {
         loadUserFromStorage()
@@ -30,11 +35,13 @@ export default function RootLayout() {
     }
 
     return (
-        <Stack>
-            <Stack.Screen name="index" options={{headerShown: false}}/>
-            <Stack.Screen name="(Onboarding)" options={{headerShown: false}}/>
-            <Stack.Screen name="(auth)" options={{headerShown: false}}/>
-            <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
-        </Stack>
+        <ThirdwebProvider>
+            <Stack>
+                <Stack.Screen name="index" options={{ headerShown: false }} />
+                <Stack.Screen name="(Onboarding)" options={{ headerShown: false }} />
+                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            </Stack>
+        </ThirdwebProvider>
     );
 }

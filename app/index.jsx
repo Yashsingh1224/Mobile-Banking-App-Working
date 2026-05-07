@@ -1,21 +1,21 @@
-import React, {useEffect, useState} from 'react'
-import {View, Text, TouchableOpacity, Image} from "react-native"
-import {SafeAreaView} from "react-native-safe-area-context"
-import {icons} from "../constants"
-import {router} from "expo-router"
+import React, { useEffect, useState } from 'react'
+import { View, Text, TouchableOpacity, Image } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
+import { icons } from "../constants"
+import { router } from "expo-router"
 import OnboardingView from "../components/OnboardingView"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import {useGlobalStore} from "../context/globalStore"
+import { useGlobalStore } from "../context/globalStore"
 import Loader from "../components/Loader"
-
+import "fast-text-encoding";
 const Index = () => {
     const [activeItem, setActiveItem] = useState(0)
     const [firstTime, setFirsTime] = useState(null) // Initially null to indicate loading state
-    const {userData, loading, isLogged} = useGlobalStore()
+    const { userData, loading, isLogged } = useGlobalStore()
 
     useEffect(() => {
         const checkFirstTimeOpen = async () => {
-           const isFirstTime = await AsyncStorage.getItem('isFirstTime')
+            const isFirstTime = await AsyncStorage.getItem('isFirstTime')
 
             if (isFirstTime === null) {
                 // First time the app is opened after installation
@@ -41,9 +41,9 @@ const Index = () => {
     }, [firstTime, isLogged, loading, userData])
 
     function handleNext() {
-        if(activeItem < 2){
+        if (activeItem < 2) {
             setActiveItem(activeItem + 1)
-        }else{
+        } else {
             router.push('/Register')
         }
     }
