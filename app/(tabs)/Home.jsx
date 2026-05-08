@@ -173,7 +173,7 @@ const Home = () => {
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ minWidth: '100%', alignItems: 'center', paddingBottom: 24 }}>
                 <View className="w-full px-4 pt-4">
                     <TouchableOpacity
-                        className="bg-[#EAF2FF] border border-[#D7E6FF] p-3 rounded-2xl items-center"
+                        className="bg-[#EAF2FF] border border-[#CFE0FF] p-3 rounded-2xl items-center"
                         disabled={isConnecting}
                         onPress={handleConnectWallet}
                     >
@@ -183,7 +183,7 @@ const Home = () => {
                     </TouchableOpacity>
                 </View>
 
-                <View className="w-[92%] bg-navy rounded-[28px] p-5 mt-4">
+                <View className="w-[92%] bg-navy rounded-[30px] p-5 mt-4">
                     <View className="flex-row gap-2 items-center">
                         <Text className="text-gray-100 text-start font-pmedium">Total Balance</Text>
                         <Image className="w-5 h-5" source={icons.eye} resizeMode="contain" />
@@ -219,7 +219,7 @@ const Home = () => {
                 <QuickLink />
 
                 {/* Banner Start */}
-                <View className="flex-row justify-around items-center bg-[#ECFDF5] border border-[#BBF7D0] w-[92%] h-[120px] mt-5 rounded-2xl">
+                <View className="flex-row justify-around items-center bg-[#EAF2FF] border border-[#CFE0FF] w-[92%] h-[120px] mt-5 rounded-3xl">
                     <View className="mr-0">
                         <Image className="w-[112px] h-[83px]" source={images.rafiki} resizeMode="contain" />
                     </View>
@@ -241,7 +241,7 @@ const Home = () => {
                     </View>
 
                     {loading ? (
-                        <ActivityIndicator size="large" color="#10B981" />
+                        <ActivityIndicator size="large" color="#0A84FF" />
                     ) : transactions.length === 0 ? (
                         <View className="w-full bg-surface border border-line rounded-2xl p-5 flex-row items-center gap-2 justify-center">
                             <Image className="w-5 h-5" source={icons.empty} resizeMode="contain" />
@@ -251,7 +251,7 @@ const Home = () => {
                         transactions.slice(0, 3).map((item) => (
                             <TouchableOpacity key={item.transactionID} className="flex-row justify-between bg-surface border border-line rounded-2xl p-4 mb-3">
                                 <View className="flex-row items-center gap-3 flex-1">
-                                    <View className="w-10 h-10 rounded-2xl bg-[#F1F5F9] items-center justify-center">
+                                    <View className="w-10 h-10 rounded-2xl bg-primary items-center justify-center">
                                     <Image
                                         className="w-5 h-5"
                                         source={item.transactionType === 'receive' ? icons.receiveIcon2 : item.transactionType === 'transfer' ? icons.sent : icons.sent}
@@ -268,7 +268,7 @@ const Home = () => {
                                     </View>
                                 </View>
                                 <View className="ml-2">
-                                    <Text className={`font-pbold ${item.transactionType === 'transfer' ? "text-red-600" : "text-green-600"}`}>
+                                    <Text className={`font-pbold ${item.transactionType === 'transfer' ? "text-danger" : "text-success"}`}>
                                         {item.transactionType === 'receive' ? "+" : "-"}{item.amount.toLocaleString()}
                                     </Text>
                                 </View>

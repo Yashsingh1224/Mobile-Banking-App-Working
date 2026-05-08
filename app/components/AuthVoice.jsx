@@ -138,11 +138,10 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#F5F8FB',
-        paddingHorizontal: 20,
+        backgroundColor: '#FFFFFF',
     },
     button: {
-        backgroundColor: '#0F2742',
+        backgroundColor: '#0A84FF',
         paddingVertical: 14,
         paddingHorizontal: 15,
         borderRadius: 18,

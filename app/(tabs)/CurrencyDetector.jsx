@@ -5,6 +5,7 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import * as ImageManipulator from "expo-image-manipulator";
 import * as Speech from "expo-speech";
 import jpeg from "jpeg-js";
+import { router } from "expo-router";
 
 const MODEL_ASSET = require("../../assets/models/currency_detector.onnx");
 const SCAN_INTERVAL_MS = 1800;
@@ -91,6 +92,8 @@ const CurrencyDetector = () => {
 
     useEffect(() => {
         let mounted = true;
+
+        Speech.speak("Welcome to the currency detector.");
 
         const loadModel = async () => {
             try {
@@ -227,7 +230,7 @@ const CurrencyDetector = () => {
     if (!permission) {
         return (
             <View className="flex-1 bg-black items-center justify-center">
-                <ActivityIndicator size="large" color="#10B981" />
+                <ActivityIndicator size="large" color="#0A84FF" />
             </View>
         );
     }
@@ -268,10 +271,10 @@ const CurrencyDetector = () => {
 
                     <View className="mx-8 h-[240px] border-4 border-secondary rounded-2xl bg-black/10" />
 
-                    <View className="bg-white rounded-t-[28px] px-5 pt-5 pb-8">
+                    <View className="bg-white rounded-t-[30px] px-5 pt-5 pb-8">
                         <View className="flex-row items-center justify-between">
                             <Text className="text-muted text-sm font-pmedium">{statusText}</Text>
-                            {isProcessing && <ActivityIndicator size="small" color="#10B981" />}
+                            {isProcessing && <ActivityIndicator size="small" color="#0A84FF" />}
                         </View>
                         <Text className="text-navy text-3xl font-pbold mt-1">
                             {detectedNote || "No note"}
@@ -281,7 +284,7 @@ const CurrencyDetector = () => {
                         </Text>
 
                         <TouchableOpacity
-                            className={`mt-5 rounded-2xl py-4 items-center ${isScanning ? "bg-red-500" : "bg-secondary"}`}
+                            className={`mt-5 rounded-2xl py-4 items-center ${isScanning ? "bg-danger" : "bg-secondary"}`}
                             onPress={isScanning ? stopScanning : startScanning}
                         >
                             <Text className="text-white text-lg font-pbold">
