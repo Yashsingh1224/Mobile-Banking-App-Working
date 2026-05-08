@@ -151,64 +151,67 @@ const Home = () => {
 
     return (
         <SafeAreaView className="bg-primary w-full h-full">
-            <View className="pt-10">
+            <View className="pt-4 px-4">
                 <VoiceToTextInput />
             </View>
 
-            <View className="flex-row justify-between items-center px-3 pt-4">
+            <View className="flex-row justify-between items-center px-4 pt-5">
                 <View>
-                    <Text className="text-xl font-bold text-gray-700">{getGreeting()}</Text>
-                    <Text className="text-gray-600">{userData?.firstName + " " + userData?.lastName}</Text>
+                    <Text className="text-sm font-pmedium text-muted">{getGreeting()}</Text>
+                    <Text className="text-2xl font-pbold text-navy">{userData?.firstName + " " + userData?.lastName}</Text>
                 </View>
                 <View className="flex-row gap-3">
-                    <Image className="w-6 h-6" source={icons.scan} resizeMode="contain" />
-                    <Image className="w-6 h-6" source={icons.bell} resizeMode="contain" />
+                    <View className="w-10 h-10 bg-surface border border-line rounded-2xl items-center justify-center">
+                        <Image className="w-5 h-5" source={icons.scan} resizeMode="contain" />
+                    </View>
+                    <View className="w-10 h-10 bg-surface border border-line rounded-2xl items-center justify-center">
+                        <Image className="w-5 h-5" source={icons.bell} resizeMode="contain" />
+                    </View>
                 </View>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ minWidth: '100%', alignItems: 'center', justifyContent: 'center' }}>
-                <View className="w-full px-3 pt-3">
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ minWidth: '100%', alignItems: 'center', paddingBottom: 24 }}>
+                <View className="w-full px-4 pt-4">
                     <TouchableOpacity
-                        className="p-3 items-center"
+                        className="bg-[#EAF2FF] border border-[#D7E6FF] p-3 rounded-2xl items-center"
                         disabled={isConnecting}
                         onPress={handleConnectWallet}
                     >
-                        <Text className="font-pbold text-black">
+                        <Text className="font-pbold text-accent">
                             {activeAccount?.address ? "Wallet Connected" : isConnecting ? "Connecting..." : "Connect MetaMask"}
                         </Text>
                     </TouchableOpacity>
                 </View>
 
-                <View className="w-full flex-row gap-2 mb-[-20px] p-3 items-center">
-                    <Text className=" text-gray-200 text-start">Total Balance</Text>
-                    <Image className="w-6 h-6" source={icons.eye} resizeMode="contain" />
-                </View>
-
-                <View className="w-full p-3">
+                <View className="w-[92%] bg-navy rounded-[28px] p-5 mt-4">
+                    <View className="flex-row gap-2 items-center">
+                        <Text className="text-gray-100 text-start font-pmedium">Total Balance</Text>
+                        <Image className="w-5 h-5" source={icons.eye} resizeMode="contain" />
+                    </View>
                     {/* Displaying Live Blockchain Balance */}
-                    <Text className="text-gray-800 font-pregular text-3xl">
+                    <Text className="text-white font-pbold text-4xl mt-2">
                         ${displayBalance}
                     </Text>
                     {hasZeroBalance && (
                         <TouchableOpacity
                             disabled={fundingWallet}
                             onPress={handleGetFreeTestMoney}
-                            className="bg-secondary mt-3 p-3 rounded-3xl items-center"
+                            className="bg-secondary mt-4 p-3 rounded-2xl items-center"
                         >
                             <Text className="text-white font-pbold">
                                 {fundingWallet ? "Adding..." : "Get Free Test Money"}
                             </Text>
                         </TouchableOpacity>
                     )}
-                    <View className="flex-row justify-between gap-3 mt-1">
-                        <TouchableOpacity className="flex-1 p-2 flex-row bg-[#3E92CC] rounded-3xl justify-center items-center" onPress={() => router.push("/Transfer")}>
-                            <Image className="w-6 h-6 mr-2" source={icons.transfer} resizeMode="contain" />
-                            <Text className="text-white font-pregular text-lg">Transfer</Text>
+                    <View className="flex-row justify-between gap-3 mt-5">
+                        <TouchableOpacity className="flex-1 py-3 flex-row bg-accent rounded-2xl justify-center items-center" onPress={() => router.push("/Transfer")}>
+                            <Image className="w-5 h-5 mr-2" source={icons.transfer} resizeMode="contain" />
+                            <Text className="text-white font-pbold text-base">Transfer</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity className="flex-1 p-2 flex-row bg-[#00EB97] rounded-3xl justify-center items-center">
-                            <Image className="w-6 h-6 mr-2" source={icons.receiveIcon1} resizeMode="contain" />
-                            <Text className="text-white font-pregular text-lg">Receive</Text>
+                        <TouchableOpacity className="flex-1 py-3 flex-row bg-secondary rounded-2xl justify-center items-center">
+                            <Image className="w-5 h-5 mr-2" source={icons.receiveIcon1} resizeMode="contain" />
+                            <Text className="text-white font-pbold text-base">Receive</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -216,53 +219,55 @@ const Home = () => {
                 <QuickLink />
 
                 {/* Banner Start */}
-                <View className="flex-row justify-around items-center bg-[#00EB97] w-[95%] h-[120px] mt-4 rounded-[8px]">
+                <View className="flex-row justify-around items-center bg-[#ECFDF5] border border-[#BBF7D0] w-[92%] h-[120px] mt-5 rounded-2xl">
                     <View className="mr-0">
                         <Image className="w-[112px] h-[83px]" source={images.rafiki} resizeMode="contain" />
                     </View>
                     <View>
-                        <Text className="text-[21px] text-white font-pregular">Complete your</Text>
-                        <Text className="text-[21px] text-white font-pregular">account verification</Text>
+                        <Text className="text-[19px] text-navy font-pbold">Complete your</Text>
+                        <Text className="text-[19px] text-navy font-pbold">account verification</Text>
                     </View>
-                    <TouchableOpacity className="w-[40px] h-[40px] rounded-full items-center justify-center bg-[#54F2B9] mt-7 mr-3">
+                    <TouchableOpacity className="w-[40px] h-[40px] rounded-full items-center justify-center bg-secondary mt-7 mr-3">
                         <Image className="w-6 h-6" source={icons.transfer} resizeMode="contain" />
                     </TouchableOpacity>
                 </View>
                 {/* Banner End */}
 
                 {/* Transaction Log Start */}
-                <View className="w-full mt-2 mb-14">
-                    <View className="w-full flex-row justify-between items-center p-3">
-                        <Text className="text-gray-200 text-lg">Transactions</Text>
-                        <Link href="/Transactions" className="text-[#00EB97] font-pregular">See all</Link>
+                <View className="w-full mt-4 mb-14 px-4">
+                    <View className="w-full flex-row justify-between items-center mb-3">
+                        <Text className="text-navy text-lg font-pbold">Transactions</Text>
+                        <Link href="/Transactions" className="text-secondary font-pbold">See all</Link>
                     </View>
 
                     {loading ? (
-                        <ActivityIndicator size="large" color="#00EB97" />
+                        <ActivityIndicator size="large" color="#10B981" />
                     ) : transactions.length === 0 ? (
-                        <View className="w-[100vw] flex-row items-center gap-2 justify-center">
+                        <View className="w-full bg-surface border border-line rounded-2xl p-5 flex-row items-center gap-2 justify-center">
                             <Image className="w-5 h-5" source={icons.empty} resizeMode="contain" />
-                            <Text className="text-gray-100 text-lg">No transaction history</Text>
+                            <Text className="text-muted text-base font-pmedium">No transaction history</Text>
                         </View>
                     ) : (
                         transactions.slice(0, 3).map((item) => (
-                            <TouchableOpacity key={item.transactionID} className="flex-row justify-between p-3">
-                                <View className="flex-row items-center gap-2">
+                            <TouchableOpacity key={item.transactionID} className="flex-row justify-between bg-surface border border-line rounded-2xl p-4 mb-3">
+                                <View className="flex-row items-center gap-3 flex-1">
+                                    <View className="w-10 h-10 rounded-2xl bg-[#F1F5F9] items-center justify-center">
                                     <Image
-                                        className="w-4 h-4"
+                                        className="w-5 h-5"
                                         source={item.transactionType === 'receive' ? icons.receiveIcon2 : item.transactionType === 'transfer' ? icons.sent : icons.sent}
                                         resizeMode="contain"
                                     />
-                                    <View>
-                                        <Text className="font-pregular text-[16px]">
+                                    </View>
+                                    <View className="flex-1">
+                                        <Text className="font-pbold text-navy text-[15px]">
                                             {item.transactionType === 'airtime' ? `Sent airtime to ${item.phone}` : item.transactionType === 'receive' ? `Received from ${item.name}` : `Transferred to ${item.name}`}
                                         </Text>
-                                        <Text className="text-xs text-gray-500">
+                                        <Text className="text-xs text-muted mt-1">
                                             {item.dateTime} (Category: {item.category})
                                         </Text>
                                     </View>
                                 </View>
-                                <View>
+                                <View className="ml-2">
                                     <Text className={`font-pbold ${item.transactionType === 'transfer' ? "text-red-600" : "text-green-600"}`}>
                                         {item.transactionType === 'receive' ? "+" : "-"}{item.amount.toLocaleString()}
                                     </Text>

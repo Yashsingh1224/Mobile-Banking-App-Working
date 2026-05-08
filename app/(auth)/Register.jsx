@@ -140,21 +140,24 @@ const Register = () => {
             }
             <ScrollView
                 showsVerticalScrollIndicator={false}
-                className="mx-2 mb-2"
+                className="mx-5 mb-2"
                 contentContainerStyle={{ minHeight: "100%", justifyContent: "center" }}
             >
-                <View className="w-full justify-center items-center mt-7">
-                    <Text className="text-2xl font-pbold text-secondary">Welcome</Text>
-                    <Text className="text-gray-200 text-lg">Register to get started</Text>
+                <View className="w-full justify-center items-center mt-7 mb-2">
+                    <View className="w-14 h-14 bg-[#ECFDF5] rounded-2xl items-center justify-center mb-4">
+                        <Image className="w-7 h-7" source={icons.bank} resizeMode="contain" />
+                    </View>
+                    <Text className="text-3xl font-pbold text-navy">Create account</Text>
+                    <Text className="text-muted text-base mt-1 font-pmedium">Start banking securely</Text>
                 </View>
 
                 <View
-                    className="mt-6 rounded-3xl border-2 border-[#E7E7E7] w-full px-4 py-4">
+                    className="mt-5 rounded-2xl border border-line bg-surface w-full px-4 py-4">
                     <RegisterVoice username="yash" />
                 </View>
 
                 <View
-                    className=" mt-6 rounded-3xl border-2 border-[#E7E7E7] flex-row items-center w-full h-[56px] px-4">
+                    className=" mt-4 rounded-2xl border border-line bg-surface flex-row items-center w-full h-[58px] px-4">
                     <Image
                         className="w-6 h-6 "
                         source={icons.phone}
@@ -162,13 +165,14 @@ const Register = () => {
                     />
                     <TextInput
                         onChangeText={(e) => setForm({ ...form, phone: e })}
-                        className="flex-1 font-pmedium ml-2"
+                        className="flex-1 font-pmedium ml-3 text-navy"
                         placeholder="Phone number"
+                        placeholderTextColor="#94A3B8"
                     />
                 </View>
 
                 <View
-                    className=" mt-6 rounded-3xl border-2 border-[#E7E7E7] flex-row items-center w-full h-[56px] px-4">
+                    className=" mt-4 rounded-2xl border border-line bg-surface flex-row items-center w-full h-[58px] px-4">
                     <Image
                         className="w-6 h-6 "
                         source={icons.mail}
@@ -176,18 +180,20 @@ const Register = () => {
                     />
                     <TextInput
                         onChangeText={(e) => setForm({ ...form, email: e })}
-                        className="flex-1 font-pmedium ml-2"
+                        className="flex-1 font-pmedium ml-3 text-navy"
                         placeholder="Email address"
+                        placeholderTextColor="#94A3B8"
                         keyboardType="email-address"
                     />
                 </View>
 
-                <View className="mt-6 rounded-3xl border-2 border-[#E7E7E7] flex-row items-center w-full h-[56px] px-4">
+                <View className="mt-4 rounded-2xl border border-line bg-surface flex-row items-center w-full h-[58px] px-4">
                     <Image className="w-6 h-6" source={icons.lock} resizeMode="contain" />
                     <TextInput
                         onChangeText={(e) => setForm({ ...form, password: e })}
-                        className="flex-1 font-pmedium ml-2"
+                        className="flex-1 font-pmedium ml-3 text-navy"
                         placeholder="Password"
+                        placeholderTextColor="#94A3B8"
                         keyboardType="default"
                         secureTextEntry={!showPassword}
                     />
@@ -201,7 +207,7 @@ const Register = () => {
                 </View>
 
                 <View
-                    className=" mt-6 rounded-3xl border-2 border-[#E7E7E7] flex-row items-center w-full h-[56px] px-4">
+                    className=" mt-4 rounded-2xl border border-line bg-surface flex-row items-center w-full h-[58px] px-4">
                     <Image
                         className="w-6 h-6 "
                         source={icons.user}
@@ -209,13 +215,14 @@ const Register = () => {
                     />
                     <TextInput
                         onChangeText={(e) => setForm({ ...form, firstName: e })}
-                        className="flex-1 font-pmedium ml-2"
+                        className="flex-1 font-pmedium ml-3 text-navy"
                         placeholder="First Name"
+                        placeholderTextColor="#94A3B8"
                     />
                 </View>
 
                 <View
-                    className=" mt-6 rounded-3xl border-2 border-[#E7E7E7] flex-row items-center w-full h-[56px] px-4">
+                    className=" mt-4 rounded-2xl border border-line bg-surface flex-row items-center w-full h-[58px] px-4">
                     <Image
                         className="w-6 h-6 "
                         source={icons.user}
@@ -223,22 +230,23 @@ const Register = () => {
                     />
                     <TextInput
                         onChangeText={(e) => setForm({ ...form, lastName: e })}
-                        className="flex-1 font-pmedium ml-2"
+                        className="flex-1 font-pmedium ml-3 text-navy"
                         placeholder="Last Name"
+                        placeholderTextColor="#94A3B8"
                     />
                 </View>
 
                 {/*Date picker field start*/}
                 <TouchableOpacity
                     onPress={() => setShowDateOfBirth(true)}
-                    className=" mt-6 rounded-3xl border-2 border-[#E7E7E7] flex-row items-center w-full h-[56px] px-4">
+                    className=" mt-4 rounded-2xl border border-line bg-surface flex-row items-center w-full h-[58px] px-4">
 
                     <Image
                         resizeMode="contain"
                         className="w-6 h-6"
                         source={icons.calendar} />
 
-                    <Text className="flex-1 text-gray-300 ml-2">
+                    <Text className="flex-1 text-muted ml-3 font-pmedium">
                         {date.toLocaleDateString()} Date Of Birth
                     </Text>
                 </TouchableOpacity>
@@ -251,21 +259,21 @@ const Register = () => {
                     />
                 )}
 
-                <View className="flex-row items-center w-full h-[56px] px-4">
+                <View className="flex-row items-center w-full min-h-[56px] px-1 mt-2">
                     <Checkbox value={checked} onValueChange={ToggleTerms} />
-                    <Text className="ml-3">I agree to the terms and conditions</Text>
+                    <Text className="ml-3 text-muted font-pregular">I agree to the terms and conditions</Text>
                 </View>
 
                 <TouchableOpacity
                     onPress={handleSubmit}
-                    className="bg-secondary mt-5 flex-row p-3 rounded-full items-center justify-center"
+                    className="bg-secondary mt-4 flex-row p-4 rounded-2xl items-center justify-center"
                 >
-                    <Text className="ml-3 text-lg text-white items-center justify-center">Submit</Text>
+                    <Text className="text-lg font-pbold text-white items-center justify-center">Submit</Text>
                 </TouchableOpacity>
 
-                <View className="w-full justify-end items-center pt-3 flex-row">
-                    <Text className="font-pregular text-gray-200">Already have an account? </Text>
-                    <Link href="/Login" className="text-lg text-secondary mx-2">Login</Link>
+                <View className="w-full justify-center items-center pt-5 flex-row">
+                    <Text className="font-pregular text-muted">Already have an account? </Text>
+                    <Link href="/Login" className="text-lg text-secondary font-pbold mx-2">Login</Link>
                 </View>
 
             </ScrollView>

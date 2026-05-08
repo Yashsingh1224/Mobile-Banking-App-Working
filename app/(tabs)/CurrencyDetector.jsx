@@ -227,7 +227,7 @@ const CurrencyDetector = () => {
     if (!permission) {
         return (
             <View className="flex-1 bg-black items-center justify-center">
-                <ActivityIndicator size="large" color="#00EB97" />
+                <ActivityIndicator size="large" color="#10B981" />
             </View>
         );
     }
@@ -235,16 +235,18 @@ const CurrencyDetector = () => {
     if (!permission.granted) {
         return (
             <View className="flex-1 bg-primary px-6 items-center justify-center">
-                <Text className="text-2xl font-pbold text-black text-center">Currency Detector</Text>
-                <Text className="text-gray-300 text-center mt-3">
-                    Camera access is required to detect currency notes.
-                </Text>
-                <TouchableOpacity
-                    className="bg-secondary rounded-full px-6 py-4 mt-6"
-                    onPress={requestPermission}
-                >
-                    <Text className="text-white font-pbold">Allow Camera</Text>
-                </TouchableOpacity>
+                <View className="bg-surface border border-line rounded-[28px] p-6 w-full items-center">
+                    <Text className="text-2xl font-pbold text-navy text-center">Currency Detector</Text>
+                    <Text className="text-muted text-center mt-3 font-pmedium">
+                        Camera access is required to detect currency notes.
+                    </Text>
+                    <TouchableOpacity
+                        className="bg-secondary rounded-2xl px-6 py-4 mt-6"
+                        onPress={requestPermission}
+                    >
+                        <Text className="text-white font-pbold">Allow Camera</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         );
     }
@@ -259,27 +261,27 @@ const CurrencyDetector = () => {
                 <View className="flex-1 justify-between">
                     <View className="px-5 pt-14">
                         <Text className="text-white text-2xl font-pbold">Currency Detector</Text>
-                        <Text className="text-gray-100 mt-1">
+                        <Text className="text-gray-100 mt-1 font-pmedium">
                             Hold the note inside the frame
                         </Text>
                     </View>
 
-                    <View className="mx-8 h-[240px] border-4 border-secondary rounded-lg bg-black/10" />
+                    <View className="mx-8 h-[240px] border-4 border-secondary rounded-2xl bg-black/10" />
 
-                    <View className="bg-white rounded-t-[24px] px-5 pt-5 pb-8">
+                    <View className="bg-white rounded-t-[28px] px-5 pt-5 pb-8">
                         <View className="flex-row items-center justify-between">
-                            <Text className="text-gray-300 text-sm">{statusText}</Text>
-                            {isProcessing && <ActivityIndicator size="small" color="#00EB97" />}
+                            <Text className="text-muted text-sm font-pmedium">{statusText}</Text>
+                            {isProcessing && <ActivityIndicator size="small" color="#10B981" />}
                         </View>
-                        <Text className="text-black text-3xl font-pbold mt-1">
+                        <Text className="text-navy text-3xl font-pbold mt-1">
                             {detectedNote || "No note"}
                         </Text>
-                        <Text className="text-gray-300 mt-1">
+                        <Text className="text-muted mt-1 font-pmedium">
                             {confidence === null ? "Confidence unavailable" : `Confidence ${(confidence * 100).toFixed(1)}%`}
                         </Text>
 
                         <TouchableOpacity
-                            className={`mt-5 rounded-full py-4 items-center ${isScanning ? "bg-red-500" : "bg-secondary"}`}
+                            className={`mt-5 rounded-2xl py-4 items-center ${isScanning ? "bg-red-500" : "bg-secondary"}`}
                             onPress={isScanning ? stopScanning : startScanning}
                         >
                             <Text className="text-white text-lg font-pbold">

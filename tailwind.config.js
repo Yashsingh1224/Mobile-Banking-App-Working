@@ -4,17 +4,23 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#fff",
-        secondary: "#00EB97",
+        primary: "#F5F8FB",
+        secondary: "#10B981",
+        surface: "#FFFFFF",
+        navy: "#0F2742",
+        muted: "#64748B",
+        line: "#E2E8F0",
+        accent: "#2563EB",
+        warning: "#F59E0B",
         black: {
           DEFAULT: "#000",
-          100: "#1E1E2D",
-          200: "#232533",
+          100: "#0F2742",
+          200: "#1E293B",
         },
         gray: {
-          100: "#CDCDE0",
-          200: "#303030",
-          300: "#909090"
+          100: "#CBD5E1",
+          200: "#64748B",
+          300: "#94A3B8"
         },
       },
       fontFamily: {

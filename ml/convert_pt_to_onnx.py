@@ -1,5 +1,6 @@
 import os
 
+import onnx
 import torch
 import torchvision.models as models
 
@@ -26,14 +27,20 @@ def main():
         dummy_input,
         ONNX_PATH,
         export_params=True,
-        opset_version=17,
+        opset_version=18,
         do_constant_folding=True,
         input_names=["input"],
         output_names=["logits"],
         dynamic_axes=None,
+        external_data=False,
     )
 
+    onnx_model = onnx.load(ONNX_PATH)
+    onnx.checker.check_model(onnx_model)
+
+    model_size_mb = os.path.getsize(ONNX_PATH) / (1024 * 1024)
     print(f"ONNX model exported to: {ONNX_PATH}")
+    print(f"ONNX model size: {model_size_mb:.2f} MB")
 
 
 if __name__ == "__main__":

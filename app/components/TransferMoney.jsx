@@ -6,6 +6,7 @@ import { auth, db } from "../../utility/firebaseConfig";
 import Loader from "../../components/Loader";
 import FingerprintAuth from "./FingerprintAuth";
 import * as Speech from 'expo-speech';
+import VoiceToTextInput from './VoiceToTextInput';
 import VoiceToTextTransfer from './VoiceToTextTransfer';
 import VerifyVoice from './VerifyVoice';
 import { useGlobalStore } from "../../context/globalStore";
@@ -244,10 +245,17 @@ const TransferMoney = () => {
         <SafeAreaView className="bg-primary h-full w-full p-5">
             {loading && <Loader />}
 
+            // And change this condition from requiring activeAccount to just checking isPinVerified:
+            {!isPinVerified && (   // <-- remove "&& activeAccount?.address"
+                <View className="mb-4">
+                    <VoiceToTextTransfer onSpeechResult={handleVoiceCommand} />
+                </View>
+            )}
+
             {!activeAccount?.address && (
-                <View className="absolute top-5 left-5 right-5 z-20">
+                <View className="mb-4">
                     <TouchableOpacity
-                        className="bg-secondary p-3 rounded-lg items-center"
+                        className="bg-secondary p-4 rounded-2xl items-center"
                         disabled={isConnecting}
                         onPress={handleConnectWallet}
                     >
@@ -259,33 +267,37 @@ const TransferMoney = () => {
             )}
 
             {!isPinVerified && activeAccount?.address && (
-                <View className="absolute top-5 left-5 right-5 z-10">
+                <View className="mb-4">
                     <VoiceToTextTransfer onSpeechResult={handleVoiceCommand} />
                 </View>
             )}
 
             <View className="flex-1 justify-center">
                 {!isFingerprintVerified && !isVoiceVerified && (
-                    <View className="w-full">
-                        <Text className="text-2xl font-bold text-secondary">Transfer Money</Text>
+                    <View className="w-full bg-surface border border-line rounded-[28px] p-5">
+                        <Text className="text-3xl font-pbold text-navy">Transfer Money</Text>
+                        <Text className="text-muted font-pmedium mt-1">Send money with PIN, biometric, and voice verification.</Text>
 
                         <TextInput
-                            className="mt-5 p-3 border rounded-lg"
+                            className="mt-5 p-4 border border-line bg-primary rounded-2xl font-pmedium text-navy"
                             placeholder="Recipient Account Number"
+                            placeholderTextColor="#94A3B8"
                             value={recipientAccount}
                             onChangeText={setRecipientAccount}
                             keyboardType="numeric"
                         />
                         <TextInput
-                            className="mt-3 p-3 border rounded-lg"
+                            className="mt-3 p-4 border border-line bg-primary rounded-2xl font-pmedium text-navy"
                             placeholder="Amount"
+                            placeholderTextColor="#94A3B8"
                             value={amount}
                             onChangeText={setAmount}
                             keyboardType="numeric"
                         />
                         <TextInput
-                            className="mt-3 p-3 border rounded-lg"
+                            className="mt-3 p-4 border border-line bg-primary rounded-2xl font-pmedium text-navy"
                             placeholder="Enter PIN"
+                            placeholderTextColor="#94A3B8"
                             value={pin}
                             onChangeText={setPin}
                             keyboardType="numeric"
@@ -295,8 +307,8 @@ const TransferMoney = () => {
                         {!isPinVerified ? (
                             <TouchableOpacity
                                 onPress={validatePinAndAuthenticate}
-                                className="bg-secondary mt-5 p-3 rounded-lg items-center">
-                                <Text className="text-white text-lg">Verify PIN</Text>
+                                className="bg-secondary mt-5 p-4 rounded-2xl items-center">
+                                <Text className="text-white text-lg font-pbold">Verify PIN</Text>
                             </TouchableOpacity>
                         ) : (
                             <View className="mt-5">
@@ -307,7 +319,8 @@ const TransferMoney = () => {
                 )}
 
                 {isFingerprintVerified && !isVoiceVerified && (
-                    <View className="w-full">
+                    <View className="w-full bg-surface border border-line rounded-[28px] p-5">
+                        <Text className="text-2xl font-pbold text-navy mb-4 text-center">Confirm by voice</Text>
                         <VerifyVoice username={username} onSuccess={() => {
                             setIsVoiceVerified(true);
                             handleTransfer();

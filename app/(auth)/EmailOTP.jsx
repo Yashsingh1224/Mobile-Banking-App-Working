@@ -24,22 +24,30 @@ const EmailOTP = () => {
         }
     }
     return (
-        <SafeAreaView className="bg-primary, h-full w-full justify-center">
+        <SafeAreaView className="bg-primary h-full w-full justify-center">
             {loading &&
                 <Loader />
             }
             <ScrollView
                 showsVerticalScrollIndicator={false}
-                className="mx-2 mb-2 mt-14"
+                className="mx-5 mb-2 mt-14"
                 contentContainerStyle={{ minHeight: '100%', marginVertical: 70 }}
             >
-                <View className="w-full justify-center items-center my-8">
-                    <Text className="text-gray-200 font-bold">An Email verification link has been sent to you.</Text>
-                    <Text className="text-gray-200 mt-6">Click the button once you have verified your email</Text>
+                <View className="w-full justify-center items-center my-8 bg-surface border border-line rounded-2xl p-6">
+                    <View className="w-14 h-14 rounded-2xl bg-[#ECFDF5] items-center justify-center mb-4">
+                        <Image
+                            className="w-7 h-7"
+                            resizeMode="contain"
+                            source={icons.mail}
+                        />
+                    </View>
+                    <Text className="text-navy text-center text-xl font-pbold">Verify your email</Text>
+                    <Text className="text-muted text-center mt-3 font-pregular">An email verification link has been sent to you.</Text>
+                    <Text className="text-muted text-center mt-2 font-pregular">Click the button once you have verified your email.</Text>
                 </View>
                 <TouchableOpacity onPress={SendEmailOTP}
-                    className="bg-secondary shadow-sm flex-row p-3 mt-3 rounded-full items-center justify-center">
-                    <Text className="ml-3 text-lg text-white">Verify Email</Text>
+                    className="bg-secondary shadow-sm flex-row p-4 mt-3 rounded-2xl items-center justify-center">
+                    <Text className="text-lg text-white font-pbold">Verify Email</Text>
                 </TouchableOpacity>
                 <View className="flex-row justify-between mt-5">
                     <View className="flex-row items-center">
@@ -48,14 +56,14 @@ const EmailOTP = () => {
                             resizeMode="contain"
                             source={icons.vectorPhone}
                         />
-                        <Text className="text-gray-200 ml-1">Get a call</Text>
+                        <Text className="text-muted ml-1 font-pmedium">Get a call</Text>
                     </View>
                     <View className="flex-row items-center">
                         <Image
                             className="w-4 h-4"
                             resizeMode="contain"
                             source={icons.vectorEmail} />
-                        <Text className="text-gray-200 ml-1">Receive as sms</Text>
+                        <Text className="text-muted ml-1 font-pmedium">Receive as sms</Text>
                     </View>
                 </View>
             </ScrollView>

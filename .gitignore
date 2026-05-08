@@ -1,1 +1,16 @@
 node_modules
+
+# Expo / React Native generated output
+.expo/
+dist/
+
+# Android generated output and local caches
+android/.gradle/
+android/**/build/
+android/**/.cxx/
+android/local.properties
+
+# Local archives and build tools
+*.apk
+*.aab
+*.apks

@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     },
     authButton: {
         padding: 16,
-        backgroundColor: "#2563eb",
+        backgroundColor: "#10B981",
         borderRadius: 100,
         alignItems: "center",
         justifyContent: "center",

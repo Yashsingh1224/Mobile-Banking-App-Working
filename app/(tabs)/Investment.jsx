@@ -10,7 +10,7 @@ const Investment = () => {
         // Navigate to Home screen or perform any action
     };
     return (
-        <View className="flex-1">
+        <View className="flex-1 bg-primary">
             <AuthVoice />
         </View>
     )

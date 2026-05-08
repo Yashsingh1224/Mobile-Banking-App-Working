@@ -135,23 +135,26 @@ const AuthVoice = () => {
 const styles = StyleSheet.create({
     container: {
         paddingTop: 0,
-        flex: 0,
-        alignItems: 'center',
-        backgroundColor: '#fff',
-    },
-    button: {
-        backgroundColor: '#0066cc',
-        paddingVertical: 20,
-        paddingHorizontal: 15,
-        borderRadius: 10,
+        flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        width: '90%',
-        height: 60,
+        backgroundColor: '#F5F8FB',
+        paddingHorizontal: 20,
+    },
+    button: {
+        backgroundColor: '#0F2742',
+        paddingVertical: 14,
+        paddingHorizontal: 15,
+        borderRadius: 18,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        height: 58,
     },
     buttonText: {
         color: '#ffffff',
-        fontSize: 18,
+        fontSize: 16,
+        fontWeight: '700',
     },
 });
 
