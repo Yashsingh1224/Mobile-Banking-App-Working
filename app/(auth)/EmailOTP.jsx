@@ -33,8 +33,8 @@ const EmailOTP = () => {
                 className="mx-5 mb-2 mt-14"
                 contentContainerStyle={{ minHeight: '100%', marginVertical: 70 }}
             >
-                <View className="w-full justify-center items-center my-8 bg-surface border border-line rounded-2xl p-6">
-                    <View className="w-14 h-14 rounded-2xl bg-[#ECFDF5] items-center justify-center mb-4">
+                <View className="w-full justify-center items-center my-8 bg-surface border border-line rounded-3xl p-6">
+                    <View className="w-14 h-14 rounded-2xl bg-[#EAF2FF] items-center justify-center mb-4">
                         <Image
                             className="w-7 h-7"
                             resizeMode="contain"

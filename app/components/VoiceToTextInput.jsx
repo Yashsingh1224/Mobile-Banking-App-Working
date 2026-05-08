@@ -152,6 +152,10 @@ const VoiceToTextInput = () => {
         if (lowerText.includes('settings')) {
             handleOpenSettings();
         }
+
+        if (lowerText.includes('currency')) {
+            handleDetectPage();
+        }
         // Add more commands as needed
     };
 
@@ -174,6 +178,11 @@ const VoiceToTextInput = () => {
         // Call your check balance functionality here
         Speech.speak(`${userData?.accountBalance.toLocaleString()}`);
 
+    };
+
+    const handleDetectPage = () => {
+        console.log('🔍 Detect Page Function Triggered!');
+        router.push('/CurrencyDetector');
     };
 
     const handleLogout = () => {
@@ -210,7 +219,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5F8FB',
     },
     button: {
-        backgroundColor: '#0F2742',
+        backgroundColor: '#0A84FF',
         paddingVertical: 14,
         paddingHorizontal: 15,
         borderRadius: 18,

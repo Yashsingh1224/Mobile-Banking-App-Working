@@ -94,7 +94,7 @@ const Login = () => {
 
             <TouchableOpacity onPress={() => Speech.speak("Enter account number, then enter password, and press login.")}>
                 <View className="w-full justify-center items-center mt-7 mb-4">
-                    <View className="w-14 h-14 bg-[#ECFDF5] rounded-2xl items-center justify-center mb-4">
+                    <View className="w-14 h-14 bg-[#EAF2FF] rounded-2xl items-center justify-center mb-4">
                         <Image className="w-7 h-7" source={icons.bank} resizeMode="contain" />
                     </View>
                     <Text className="text-3xl font-pbold text-navy" accessible={true} accessibilityLabel="Welcome">Welcome back</Text>
@@ -102,40 +102,42 @@ const Login = () => {
                 </View>
             </TouchableOpacity>
 
-            <View className="mt-5 rounded-2xl border border-line bg-surface flex-row items-center w-full h-[58px] px-4">
-                <Image className="w-6 h-6" source={icons.phone} resizeMode="contain" />
-                <TextInput
-                    onChangeText={(e) => setForm({ ...form, phone: e })}
-                    className="flex-1 font-pmedium ml-3 text-navy"
-                    placeholder="Account number"
-                    placeholderTextColor="#94A3B8"
-                    keyboardType="numeric"
-                    accessible={true}
-                    accessibilityLabel="Account number input field"
-                />
-            </View>
-
-            <View className="mt-4 rounded-2xl border border-line bg-surface flex-row items-center w-full h-[58px] px-4">
-                <Image className="w-6 h-6" source={icons.lock} resizeMode="contain" />
-                <TextInput
-                    onChangeText={(e) => setForm({ ...form, password: e })}
-                    className="flex-1 font-pmedium ml-3 text-navy"
-                    placeholder="Password"
-                    placeholderTextColor="#94A3B8"
-                    keyboardType="default"
-                    secureTextEntry={!showPassword}
-                    accessible={true}
-                    accessibilityLabel="Password input field"
-                />
-                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                    <Image
-                        source={!showPassword ? icons.eye : icons.eyeHide}
-                        className="w-6 h-6"
-                        resizeMode="contain"
+            <View className="mt-5 rounded-3xl border border-line bg-surface p-4">
+                <View className="rounded-2xl border border-line bg-primary flex-row items-center w-full h-[56px] px-4">
+                    <Image className="w-6 h-6" source={icons.phone} resizeMode="contain" />
+                    <TextInput
+                        onChangeText={(e) => setForm({ ...form, phone: e })}
+                        className="flex-1 font-pmedium ml-3 text-navy"
+                        placeholder="Account number"
+                        placeholderTextColor="#9AA6BF"
+                        keyboardType="numeric"
                         accessible={true}
-                        accessibilityLabel={!showPassword ? "Show password" : "Hide password"}
+                        accessibilityLabel="Account number input field"
                     />
-                </TouchableOpacity>
+                </View>
+
+                <View className="mt-3 rounded-2xl border border-line bg-primary flex-row items-center w-full h-[56px] px-4">
+                    <Image className="w-6 h-6" source={icons.lock} resizeMode="contain" />
+                    <TextInput
+                        onChangeText={(e) => setForm({ ...form, password: e })}
+                        className="flex-1 font-pmedium ml-3 text-navy"
+                        placeholder="Password"
+                        placeholderTextColor="#9AA6BF"
+                        keyboardType="default"
+                        secureTextEntry={!showPassword}
+                        accessible={true}
+                        accessibilityLabel="Password input field"
+                    />
+                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                        <Image
+                            source={!showPassword ? icons.eye : icons.eyeHide}
+                            className="w-6 h-6"
+                            resizeMode="contain"
+                            accessible={true}
+                            accessibilityLabel={!showPassword ? "Show password" : "Hide password"}
+                        />
+                    </TouchableOpacity>
+                </View>
             </View>
 
             <TouchableOpacity

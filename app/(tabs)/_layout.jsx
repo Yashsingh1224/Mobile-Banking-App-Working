@@ -6,7 +6,7 @@ import {Image, Text, View} from "react-native";
 
 const TabIcon = ({icon, color, name, focused}) => {
     return (
-        <View className={`flex items-center justify-center ${focused ? "bg-[#ECFDF5] px-3 py-2 rounded-2xl" : "px-3 py-2"}`}>
+        <View className={`flex items-center justify-center ${focused ? "bg-[#EAF2FF] px-3 py-2 rounded-2xl" : "px-3 py-2"}`}>
             <Image
                 source={icon}
                 resizeMode="contain"
@@ -27,13 +27,13 @@ const TabLayout = () => {
         <>
             <Tabs
                 screenOptions={{
-                    tabBarActiveTintColor: "#0F2742",
-                    tabBarInactiveTintColor: "#94A3B8",
+                    tabBarActiveTintColor: "#0D1B3D",
+                    tabBarInactiveTintColor: "#9AA6BF",
                     tabBarShowLabel: false,
                     tabBarStyle: {
                         backgroundColor: "#FFFFFF",
                         borderTopWidth: 1,
-                        borderTopColor: "#E2E8F0",
+                        borderTopColor: "#DCE4F3",
                         height: 78,
                         paddingTop: 8,
                         paddingBottom: 10,

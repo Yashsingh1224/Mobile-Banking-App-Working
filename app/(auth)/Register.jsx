@@ -144,7 +144,7 @@ const Register = () => {
                 contentContainerStyle={{ minHeight: "100%", justifyContent: "center" }}
             >
                 <View className="w-full justify-center items-center mt-7 mb-2">
-                    <View className="w-14 h-14 bg-[#ECFDF5] rounded-2xl items-center justify-center mb-4">
+                    <View className="w-14 h-14 bg-[#EAF2FF] rounded-2xl items-center justify-center mb-4">
                         <Image className="w-7 h-7" source={icons.bank} resizeMode="contain" />
                     </View>
                     <Text className="text-3xl font-pbold text-navy">Create account</Text>
@@ -152,7 +152,7 @@ const Register = () => {
                 </View>
 
                 <View
-                    className="mt-5 rounded-2xl border border-line bg-surface w-full px-4 py-4">
+                    className="mt-5 rounded-3xl border border-line bg-surface w-full px-4 py-4">
                     <RegisterVoice username="yash" />
                 </View>
 
@@ -167,7 +167,7 @@ const Register = () => {
                         onChangeText={(e) => setForm({ ...form, phone: e })}
                         className="flex-1 font-pmedium ml-3 text-navy"
                         placeholder="Phone number"
-                        placeholderTextColor="#94A3B8"
+                        placeholderTextColor="#9AA6BF"
                     />
                 </View>
 
@@ -182,7 +182,7 @@ const Register = () => {
                         onChangeText={(e) => setForm({ ...form, email: e })}
                         className="flex-1 font-pmedium ml-3 text-navy"
                         placeholder="Email address"
-                        placeholderTextColor="#94A3B8"
+                        placeholderTextColor="#9AA6BF"
                         keyboardType="email-address"
                     />
                 </View>
@@ -193,7 +193,7 @@ const Register = () => {
                         onChangeText={(e) => setForm({ ...form, password: e })}
                         className="flex-1 font-pmedium ml-3 text-navy"
                         placeholder="Password"
-                        placeholderTextColor="#94A3B8"
+                        placeholderTextColor="#9AA6BF"
                         keyboardType="default"
                         secureTextEntry={!showPassword}
                     />
@@ -217,7 +217,7 @@ const Register = () => {
                         onChangeText={(e) => setForm({ ...form, firstName: e })}
                         className="flex-1 font-pmedium ml-3 text-navy"
                         placeholder="First Name"
-                        placeholderTextColor="#94A3B8"
+                        placeholderTextColor="#9AA6BF"
                     />
                 </View>
 
@@ -232,7 +232,7 @@ const Register = () => {
                         onChangeText={(e) => setForm({ ...form, lastName: e })}
                         className="flex-1 font-pmedium ml-3 text-navy"
                         placeholder="Last Name"
-                        placeholderTextColor="#94A3B8"
+                        placeholderTextColor="#9AA6BF"
                     />
                 </View>
 

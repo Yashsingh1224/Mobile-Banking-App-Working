@@ -59,15 +59,15 @@ const Index = () => {
                 <OnboardingView activeItem={activeItem} />
 
                 {activeItem !== 2 && (
-                    <View className="flex-row justify-between items-center mx-5 mb-12">
+                    <View className="flex-row justify-between items-center mx-6 mb-12">
                         <TouchableOpacity onPress={() => router.replace("Register")}>
                             <Text className="text-muted text-center text-lg font-pmedium">Skip</Text>
                         </TouchableOpacity>
 
                         <View className="flex-row items-center justify-center">
-                            <Text className={`w-[22px] h-[8px] rounded-full ${activeItem === 0 ? 'bg-secondary' : 'bg-gray-100'}`} />
-                            <Text className={`w-[22px] mx-2 h-[8px] rounded-full ${activeItem === 1 ? 'bg-secondary' : 'bg-gray-100'}`} />
-                            <Text className={`w-[22px] h-[8px] rounded-full ${activeItem === 2 ? 'bg-secondary' : 'bg-gray-100'}`} />
+                            <Text className={`w-[24px] h-[8px] rounded-full ${activeItem === 0 ? 'bg-secondary' : 'bg-gray-100'}`} />
+                            <Text className={`w-[24px] mx-2 h-[8px] rounded-full ${activeItem === 1 ? 'bg-secondary' : 'bg-gray-100'}`} />
+                            <Text className={`w-[24px] h-[8px] rounded-full ${activeItem === 2 ? 'bg-secondary' : 'bg-gray-100'}`} />
                         </View>
 
                         <TouchableOpacity
